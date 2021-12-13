@@ -1,16 +1,24 @@
-import { ColorModeScript } from '@chakra-ui/react';
-import React, { StrictMode } from 'react';
+import {ColorModeScript} from '@chakra-ui/react';
+import React, {StrictMode} from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import * as serviceWorker from './serviceWorker';
+import {ApolloProvider} from "@apollo/react-hooks";
+import ApolloClient from "apollo-boost";
+
+const client = new ApolloClient({
+    uri: "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2",
+});
 
 ReactDOM.render(
-  <StrictMode>
-    <ColorModeScript />
-    <App />
-  </StrictMode>,
-  document.getElementById('root')
+    <StrictMode>
+        <ApolloProvider client={client}>
+            <ColorModeScript/>
+            <App/>
+        </ApolloProvider>
+    </StrictMode>,
+    document.getElementById('root')
 );
 
 // If you want your app to work offline and load faster, you can change
