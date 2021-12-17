@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Box, Button, Flex, Image, Spacer, Table, TableCaption, Tbody, Td, Tfoot, Th, Thead, Tr} from "@chakra-ui/react";
+import {Button, Flex, Image, Table, Tbody, Td, Th, Thead, Tr} from "@chakra-ui/react";
 import {FETCH_TOKENS} from "../graphql/FETCH_TOKEN";
 import {useApolloClient} from "@apollo/react-hooks";
 import tokenList from "./tokenList.json";
@@ -50,7 +50,7 @@ export const TradeVolume = ({}) => {
 
     useEffect(() => {
         getTokens();
-    }, []);
+    }, [getTokens]);
 
 
     const TokenRow = ({id, name, tradeVolume, tradeVolumeUSD}) => <Tr>
