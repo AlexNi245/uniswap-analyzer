@@ -1,22 +1,37 @@
-import React, {useEffect} from 'react';
-import {getUniswapPools} from "./uniswapFunctions";
+import React, {useEffect, useState} from 'react';
+import {fetchUniswapPools, getUniswapPools} from "./uniswapFunctions";
+import {TokenValue} from "./components/TokenValue";
 
 const projectId = "b320a1316f5443969acd83344f535650"
 
+
 function App() {
+
+    const [uniPool, setUniPool] = useState([]);
+    const [pools, setPools] = useState([]);
+
     useEffect(() => {
-        getUniswapPools(0, 2);
-    }, [getUniswapPools]);
+        const setupPool = async () => {
+            const pools = await fetchUniswapPools();
+            setPools(pools)
+        }
+        setupPool();
+    }, [])
+
+
+    useEffect(() => {
+        const fetch = async () => {
+            console.log("start fetching pools")
+            const res = await getUniswapPools(pools);
+            console.log(res)
+            setUniPool(res)
+        }
+        fetch();
+
+    }, [pools]);
 
     return (
-
-        // <ChakraProvider theme={theme}>
-        //     <Box padding="24">
-        //     <h1>Daily Trade Volume</h1>
-        //     <TradeVolume/>
-        //     </Box>
-        // </ChakraProvider>
-        <p>Hi</p>
+        uniPool.map(t => <TokenValue pools={t}/>)
     );
 }
 

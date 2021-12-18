@@ -19,7 +19,7 @@ const getStartBlock = () => {
     return Math.ceil(TWENTY_FOUR_HOURS_IN_SECONDS / AVG_BLOCK_TIME)
 }
 
-const fetchUniswapPools = async (start, end) => {
+export const fetchUniswapPools = async (start, end) => {
     const UNISWAP_V3_FACTORY_ADDRESS = "0x1F98431c8aD98523631AE4a59f267346ea31F984"
     const fromBlock = 12369621
     const toBlock = web3Provider.getBlockNumber();
@@ -36,7 +36,6 @@ const fetchUniswapPools = async (start, end) => {
         address: UNISWAP_V3_FACTORY_ADDRESS,
         topics
     }))
-        .slice(start, end)
 
 
     return pools.map((e) => {
@@ -54,7 +53,7 @@ const fetchErc20MetaData = async contractAddress => {
     const namePromise = tokenContract.name();
     const symbolPromise = tokenContract.symbol();
 
-    const [name, symbol, decimals] = await Promise.all([decimalsPromise, namePromise, symbolPromise]);
+    const [name, symbol, decimals] = await Promise.all([namePromise, symbolPromise, decimalsPromise]);
 
     return {name, symbol, decimals}
 }
@@ -62,13 +61,36 @@ const fetchErc20MetaData = async contractAddress => {
 const resolveTokenNames = async pool => {
     const {poolInfo: {token0, token1}} = pool;
 
-    const [token0MetaData, token1MetaData, usdPrices] = await Promise.all([fetchErc20MetaData(token0), fetchErc20MetaData(token1), fetchTokensUsdPrice([token0, token1])]);
+    const [token0MetaData, token1MetaData, usdPrices] = await Promise.all([fetchErc20MetaData(token0), fetchErc20MetaData(token1)]);
 
     return {
         ...pool,
-        token0: {...token0MetaData, usd: usdPrices.token0},
-        token1: {...token1MetaData, usd: usdPrices.token1}
+        token0: {...token0MetaData,},
+        token1: {...token1MetaData,}
     }
+}
+const resolveTokenUsdValue = async pools => {
+    const uniqueTokenAddresses = new Set();
+
+    pools.forEach(t => {
+        const token0ContractAddress = t.poolInfo.token0.toLowerCase();
+        const token1ContractAddress = t.poolInfo.token1.toLowerCase();
+
+        uniqueTokenAddresses.add(token0ContractAddress)
+        uniqueTokenAddresses.add(token1ContractAddress)
+    });
+
+    const usdValue = await fetchTokensUsdPrice(Array.from(uniqueTokenAddresses))
+
+    return pools.map(p => {
+        const token0ContractAddress = p.poolInfo.token0.toLowerCase();
+        const token1ContractAddress = p.poolInfo.token1.toLowerCase();
+
+        const usdToken0 = usdValue[token0ContractAddress]?.usd ?? 1;
+        const usdToken1 = usdValue[token1ContractAddress]?.usd ?? 1;
+
+        return {...p, usd: {usdToken0, usdToken1}}
+    })
 }
 
 const fetchTransactionsFromUniswapPool = async (pool) => {
@@ -137,8 +159,8 @@ const cummulateValue = (pool) => {
             amount1: BigNumber.from(0)
         })
 
-    swapws.amount0 = Number.parseFloat(ethers.utils.formatUnits(swapws.amount0, token0.decimals)) * pool.token0.usd
-    swapws.amount1 = Number.parseFloat(ethers.utils.formatUnits(swapws.amount1, token1.decimals)) * pool.token1.usd
+    swapws.amount0 = Number.parseFloat(ethers.utils.formatUnits(swapws.amount0, token0.decimals)) * pool.usd.usdToken0
+    swapws.amount1 = Number.parseFloat(ethers.utils.formatUnits(swapws.amount1, token1.decimals)) * pool.usd.usdToken1
 
     const dailyUSDVolume = swapws.amount0 + swapws.amount1
 
@@ -160,37 +182,55 @@ const fetchTokensUsdPrice = async (address) => {
 
     const url = `https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses=${contracts}&vs_currencies=usd`
     const res = await fetch(url);
-    const json = await res.json()
-
-
-    return {
-        //token0: json[address[0].toLowerCase()].usd,
-        token0: 1,
-        // token1: json[address[1].toLowerCase()].usd
-        token1: 1
-    }
+    return await res.json();
 }
 
-const groupPoolsBasedOnTokens = (pools) => {
-    const uniswapaddres = "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0".toLowerCase()
+const groupPoolsBasedOnTokens = (pools,) => {
+    const selectedTokens = [
+        //   "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0",//UniSwap
+        // "0x111111111117dC0aa78b770fA6A738034120C302",//1Inch
+        "0x35a532d376FFd9a705d0Bb319532837337A398E7",//wDoge
+        "0x6f40d4A6237C257fff2dB00FA0510DeEECd303eb" //Instadapp
+    ]
 
+    return selectedTokens.map(t => {
+        const tokenContractAddress = t.toLowerCase();
+        console.log(tokenContractAddress)
+        console.log(pools)
+        return pools.filter(p => {
+                const {poolInfo: {token0, token1}} = p;
+                return token0.toLowerCase() === tokenContractAddress || token1.toLowerCase() === tokenContractAddress
+            }
+        )
+    })
 
-    return pools.filter(p => {
-            const {poolInfo: {token0, token1}} = p;
-            return token0.toLowerCase() === uniswapaddres || token1.toLowerCase() === uniswapaddres
-        }
-    )
 
 }
-export const getUniswapPools = async (start, end) => {
+export const getUniswapPools = async (pools) => {
     console.log("start assembeling")
-    const pools = await fetchUniswapPools(start, 5000);
-    // const uniPools = groupPoolsBasedOnTokens(pools)
-    const resolvedPools = await Promise.all(pools.map(resolveTokenNames));
-    console.log(resolvedPools)
-    const transactionPromises = await Promise.all(resolvedPools.map(fetchTransactionsFromUniswapPool))
-    console.log(transactionPromises)
-    const gasFeePromises = await Promise.all(transactionPromises.map(fetchGasFeesOfTransactions))
 
-    return await Promise.all([gasFeePromises.map(cummulateValue)]);
+
+    const selectedPools = groupPoolsBasedOnTokens(pools)
+
+    const poolsWitTokenUsdPrice = await Promise.all(selectedPools.map(up => resolveTokenUsdValue(up)));
+
+    const poolsWithErc20Token = await Promise.all(poolsWitTokenUsdPrice.map(async p => {
+        return await Promise.all(p.map(resolveTokenNames));
+    }))
+
+    const poolsWithTransactions = await Promise.all(poolsWithErc20Token.map(async p => {
+        return await Promise.all(p.map(fetchTransactionsFromUniswapPool))
+    }))
+
+    const poolsWithGasFeeTransactionsReceipts = await Promise.all(poolsWithTransactions.map(async p => {
+        return await Promise.all(p.map(fetchGasFeesOfTransactions))
+    }))
+
+    const poolsWithDailyUSDValue = await Promise.all(poolsWithGasFeeTransactionsReceipts.map(async p => {
+        return await Promise.all(p.map(cummulateValue))
+    }))
+
+
+    return poolsWithDailyUSDValue;
+
 }
