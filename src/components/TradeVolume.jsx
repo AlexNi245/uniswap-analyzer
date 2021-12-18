@@ -3,6 +3,7 @@ import {Button, Flex, Image, Table, Tbody, Td, Th, Thead, Tr} from "@chakra-ui/r
 import {FETCH_TOKENS} from "../graphql/FETCH_TOKEN";
 import {useApolloClient} from "@apollo/react-hooks";
 import tokenList from "./tokenList.json";
+import {getUniswapPools} from "../uniswapFunctions";
 
 
 export const TradeVolume = ({}) => {
@@ -16,7 +17,8 @@ export const TradeVolume = ({}) => {
     const getTokens = async () => {
         const query = FETCH_TOKENS;
 
-        const {data} = await client.query({query, variables: {skip: tokens.length}, fetchPolicy: "no-cache"})
+
+        const pools = getUniswapPools()
         getLogoUrl(data.tokens[0].id);
         setTokens(oldState => [...oldState, ...data.tokens])
     }
@@ -49,8 +51,8 @@ export const TradeVolume = ({}) => {
     }
 
     useEffect(() => {
-        getTokens();
-    }, [getTokens]);
+        getUniswapPools(0, 2);
+    }, [getUniswapPools]);
 
 
     const TokenRow = ({id, name, tradeVolume, tradeVolumeUSD}) => <Tr>
