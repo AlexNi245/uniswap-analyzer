@@ -7,8 +7,7 @@ import {SELECTED_TOKENS} from "./constants";
 
 const projectId = "b320a1316f5443969acd83344f535650"
 
-const defaultProvider = new ethers.providers.getDefaultProvider("mainnet", {infura: {projectId,}})
-// const defaultProvider = new ethers.providers.getDefaultProvider()
+export const defaultProvider = new ethers.providers.getDefaultProvider("mainnet", {infura: {projectId,}})
 export const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
 
 

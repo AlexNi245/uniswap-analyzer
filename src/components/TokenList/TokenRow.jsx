@@ -2,8 +2,13 @@ import {BigNumber, ethers} from "ethers";
 import tokenList from "../trustwalletTokens.json";
 import {Button, Image, Td, Tr} from "@chakra-ui/react";
 import {currencyFormatter} from "../../utils/currencyFormatter";
+import {EthPriceContext} from "../../context/EthPriceContext";
+import {useContext} from "react";
 
 export const TokenRow = ({pools, tokenContract, onClick}) => {
+
+    const etherUsd = useContext(EthPriceContext)
+
     const totaldailyVolume = pools.reduce((agg, current) => agg + current.dailyUSDVolume, 0)
 
     const totalGasUsed = pools.reduce((agg, pool) => {
@@ -31,8 +36,6 @@ export const TokenRow = ({pools, tokenContract, onClick}) => {
     ).toString()
 
     const {name, logoURI} = tokenList.tokens.find(t => t.address.toLowerCase() === tokenContract.toLowerCase())
-
-    const etherUsd = 3900; //Toto replace with context
 
 
     return (<Tr>
