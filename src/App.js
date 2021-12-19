@@ -5,12 +5,14 @@ import {Box, Heading} from "@chakra-ui/react";
 import {LoadingState} from "./components/TokenList/LoadingState";
 import {EthPriceContext} from "./context/EthPriceContext";
 import {Header} from "./components/Header/Header";
+import {TokenSearch} from "./components/TokenSearch/TokenSearch";
+import {PoolContext} from "./context/PoolContext";
 
 
 function App() {
 
-    const [uniPool, setUniPool] = useState([]);
-    const [pools, setPools] = useState([]);
+    const [selectedTokens, setSelectedTokens] = useState([]);
+    const [allPools, setAllPools] = useState([]);
 
     const [isLoading, setIsLoading] = useState(true);
 
@@ -19,9 +21,9 @@ function App() {
     useEffect(() => {
         const setupPool = async () => {
             const pools = await fetchUniswapPools();
-            setPools(pools)
+            setAllPools(pools)
         }
-        //setupPool();
+        setupPool();
     }, [])
 
     useEffect(() => {
@@ -36,7 +38,7 @@ function App() {
 
     useEffect(() => {
         const fetch = async () => {
-            if (pools.length === 0) {
+            if (allPools.length === 0) {
                 //No need to fetch if pools are empty
                 //       return
             }
@@ -46,23 +48,36 @@ function App() {
             const store = JSON.parse(localStorage.getItem("pools"))
             //console.log(res)
             //console.log(store)
-            setUniPool(store)
+            setSelectedTokens(store)
             setIsLoading(false)
         }
         fetch();
 
-    }, [pools]);
+    }, [allPools]);
 
     return (
-        <EthPriceContext.Provider value={currentEthPrice}>
-            <Header/>
-            <Box p="16">
-                <Heading>Token Value</Heading>
-                <Box mt="4">
-                    {isLoading ? <LoadingState/> : <TokenList tokens={uniPool}/>}
+        <PoolContext.Provider value={allPools}>
+            <EthPriceContext.Provider value={currentEthPrice}>
+                <Box background="#E8E8E8">
+                    <Header/>
+                    <Box p="16">
+                        <Heading>Token Value</Heading>
+                        <Box background="white" p={4} border={1} borderRadius={12} mt={6}>
+                            <Box mt="4">
+                                {isLoading ? <LoadingState/> : <TokenList tokens={selectedTokens}/>}
+                            </Box>
+                        </Box>
+                        <Box height={24}></Box>
+                        <Heading>Search token</Heading>
+                        <Box background="white" p={4} border={1} borderRadius={12} mt={6}>
+                            <Box mt="4">
+                                {isLoading ? <LoadingState/> : <TokenSearch/>}
+                            </Box>
+                        </Box>
+                    </Box>
                 </Box>
-            </Box>
-        </EthPriceContext.Provider>
+            </EthPriceContext.Provider>
+        </PoolContext.Provider>
 
     );
 }

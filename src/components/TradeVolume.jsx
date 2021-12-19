@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {FETCH_TOKENS} from "../graphql/FETCH_TOKEN";
 import {useApolloClient} from "@apollo/react-hooks";
-import {getUniswapPools} from "../uniswapFunctions";
+import {getPreselectedTokens} from "../uniswapFunctions";
 
 
 export const TradeVolume = ({}) => {
@@ -16,7 +16,7 @@ export const TradeVolume = ({}) => {
         const query = FETCH_TOKENS;
 
 
-        const pools = getUniswapPools()
+        const pools = getPreselectedTokens()
         getLogoUrl(data.tokens[0].id);
         setTokens(oldState => [...oldState, ...data.tokens])
     }
@@ -43,8 +43,8 @@ export const TradeVolume = ({}) => {
     }
 
     useEffect(() => {
-        getUniswapPools(0, 2);
-    }, [getUniswapPools]);
+        getPreselectedTokens(0, 2);
+    }, [getPreselectedTokens]);
 
 
     return (

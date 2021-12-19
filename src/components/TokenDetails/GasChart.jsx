@@ -1,9 +1,11 @@
 import {BigNumber, ethers} from "ethers";
 import {web3Provider} from "../../uniswapFunctions";
 import {Chart, registerables} from "chart.js";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 
 export const GasChart = ({pools}) => {
+
+    const [chartId, setChartId] = useState("")
 
     const calcGasUsed = () => {
         const foldedTransactions = pools.reduce((agg, pool) => {
@@ -120,8 +122,9 @@ export const GasChart = ({pools}) => {
     useEffect(() => {
         const load = async () => {
             const labels = await calcLabels();
-            console.log(labels)
-            const ctx = document.getElementById('myChart').getContext('2d');
+            const chartId = Math.random(0, 100000).toString()
+            setChartId(chartId)
+            const ctx = document.getElementById(chartId).getContext('2d');
             Chart.register(...registerables);
             new Chart(ctx, {...config, data: {...data, labels},})
         }
@@ -130,6 +133,6 @@ export const GasChart = ({pools}) => {
 
 
     return <div>
-        <canvas id="myChart" width="1200" height="200"></canvas>
+        <canvas id={chartId} width="1200" height="200"></canvas>
     </div>
 }

@@ -186,27 +186,30 @@ const fetchTokensUsdPrice = async (address) => {
     return await res.json();
 }
 
-const groupPoolsBasedOnTokens = (pools,) => {
+const groupPoolsBasedOnTokens = (allPools) => {
     return SELECTED_TOKENS.map(t => {
-        const tokenContractAddress = t.toLowerCase();
-        console.log(tokenContractAddress)
-        console.log(pools)
-        return pools.filter(p => {
-                const {poolInfo: {token0, token1}} = p;
-                return token0.toLowerCase() === tokenContractAddress || token1.toLowerCase() === tokenContractAddress
-            }
-        )
+        return getAllPoolsOfSelectedToken(t, allPools)
     })
-
-
 }
-export const getUniswapPools = async (pools) => {
-    console.log("start assembeling")
 
+export const getAllPoolsOfSelectedToken = (tokenContractAddress, allPools) => {
+    const lowercaseContractAddress = tokenContractAddress.toLowerCase();
+    return allPools.filter(p => {
+            const {poolInfo: {token0, token1}} = p;
+            return token0.toLowerCase() === lowercaseContractAddress || token1.toLowerCase() === lowercaseContractAddress
+        }
+    )
+}
 
-    const selectedPools = groupPoolsBasedOnTokens(pools)
+export const getPreselectedTokens = async (pools) => {
+    console.log("getting preselected tokens")
 
-    const poolsWitTokenUsdPrice = await Promise.all(selectedPools.map(up => resolveTokenUsdValue(up)));
+    const selectedTokens = groupPoolsBasedOnTokens(pools)
+    return await getTokens(selectedTokens)
+}
+
+export const getTokens = async (selectedTokens) => {
+    const poolsWitTokenUsdPrice = await Promise.all(selectedTokens.map(up => resolveTokenUsdValue(up)));
 
     const poolsWithErc20Token = await Promise.all(poolsWitTokenUsdPrice.map(async p => {
         return await Promise.all(p.map(resolveTokenNames));
