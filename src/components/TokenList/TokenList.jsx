@@ -39,11 +39,11 @@ export const TokenList = ({tokens}) => {
                 <Thead>
                     <Tr>
                         <Th></Th>
-                        <Th>Name</Th>
-                        <Th textAlign="center">Daily Volume </Th>
-                        <Th textAlign="end">Gas used Daily</Th>
-                        <Th textAlign="end">Gas fees Daily</Th>
-                        <Th textAlign="end"> </Th>
+                        <Th fontSize="md">Name</Th>
+                        <Th fontSize="md" textAlign="center">Daily Volume </Th>
+                        <Th fontSize="md" textAlign="center">Gas used Daily</Th>
+                        <Th fontSize="md" textAlign="center">Gas fees Daily</Th>
+                        <Th fontSize="md" textAlign="end"> </Th>
                     </Tr>
                 </Thead>
                 <Tbody>

@@ -19,7 +19,7 @@ const getStartBlock = () => {
     return Math.ceil(TWENTY_FOUR_HOURS_IN_SECONDS / AVG_BLOCK_TIME)
 }
 
-export const fetchUniswapPools = async (start, end) => {
+export const fetchUniswapPools = async () => {
     const UNISWAP_V3_FACTORY_ADDRESS = "0x1F98431c8aD98523631AE4a59f267346ea31F984"
     const fromBlock = 12369621
     const toBlock = web3Provider.getBlockNumber();
@@ -61,7 +61,7 @@ const fetchErc20MetaData = async contractAddress => {
 const resolveTokenNames = async pool => {
     const {poolInfo: {token0, token1}} = pool;
 
-    const [token0MetaData, token1MetaData, usdPrices] = await Promise.all([fetchErc20MetaData(token0), fetchErc20MetaData(token1)]);
+    const [token0MetaData, token1MetaData] = await Promise.all([fetchErc20MetaData(token0), fetchErc20MetaData(token1)]);
 
     return {
         ...pool,
@@ -132,7 +132,7 @@ const fetchGasFeesOfTransactions = async pool => {
 }
 
 export const cummulateValue = (pool) => {
-    const {transactions, poolInfo} = pool
+    const {transactions} = pool
     const swapws = transactions
         .filter(t => t.resolvedEvent.name === "Swap")
         .reduce((agg, r) => {

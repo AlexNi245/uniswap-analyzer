@@ -40,14 +40,14 @@ export const TokenRow = ({pools, tokenContract, onClick}) => {
 
     return (<Tr>
         <Td> <Image
-            maxW={50}
-            maxH={50}
+            maxW={35}
+            maxH={35}
             src={logoURI}
         /></Td>
         <Td fontWeight="bold">{name}</Td>
         <Td textAlign="center">{currencyFormatter.format(totaldailyVolume)}</Td>
-        <Td textAlign="end">{totalGasUsed}</Td>
-        <Td textAlign="end">{currencyFormatter.format(ethers.utils.formatEther(totalGasFees) * etherUsd)}</Td>
+        <Td textAlign="center">{totalGasUsed}</Td>
+        <Td textAlign="center">{currencyFormatter.format(ethers.utils.formatEther(totalGasFees) * etherUsd)}</Td>
         <Td textAlign="end"><Button onClick={onClick}>Info</Button></Td>
     </Tr>)
 }

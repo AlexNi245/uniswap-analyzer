@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {fetchUniswapPools} from "./uniswapFunctions";
+import {fetchUniswapPools, getPreselectedTokens} from "./uniswapFunctions";
 import {TokenList} from "./components/TokenList/TokenList";
-import {Box, Heading} from "@chakra-ui/react";
+import {Box, Flex, Heading, Text} from "@chakra-ui/react";
 import {LoadingState} from "./components/TokenList/LoadingState";
 import {EthPriceContext} from "./context/EthPriceContext";
 import {Header} from "./components/Header/Header";
@@ -23,7 +23,9 @@ function App() {
             const pools = await fetchUniswapPools();
             setAllPools(pools)
         }
-        setupPool();
+        if (window.ethereum !== undefined) {
+            setupPool();
+        }
     }, [])
 
     useEffect(() => {
@@ -33,53 +35,65 @@ function App() {
             console.log(ethusd)
             setCurrentEthPrice(ethusd)
         }
-        fetchCurrentEthPrice()
+        if (window.ethereum !== undefined) {
+            fetchCurrentEthPrice()
+        }
     }, [])
 
     useEffect(() => {
-        const fetch = async () => {
+        const fetchAllPools = async () => {
             if (allPools.length === 0) {
                 //No need to fetch if pools are empty
-                //       return
+                return
             }
             console.log("start fetching tokens")
-            //const res = await getUniswapPools(pools);
-            //localStorage.setItem("pools", JSON.stringify(res))
-            const store = JSON.parse(localStorage.getItem("pools"))
+            const res = await getPreselectedTokens(allPools);
+            localStorage.setItem("pools", JSON.stringify(res))
+            //const store = JSON.parse(localStorage.getItem("pools"))
             //console.log(res)
             //console.log(store)
-            setSelectedTokens(store)
+            setSelectedTokens(res)
             setIsLoading(false)
         }
-        fetch();
+        if (window.ethereum !== undefined) {
+            fetchAllPools();
+        }
 
     }, [allPools]);
 
-    return (
-        <PoolContext.Provider value={allPools}>
-            <EthPriceContext.Provider value={currentEthPrice}>
-                <Box background="#E8E8E8">
-                    <Header/>
-                    <Box p="16">
-                        <Heading>Token Value</Heading>
-                        <Box background="white" p={4} border={1} borderRadius={12} mt={6}>
-                            <Box mt="4">
-                                {isLoading ? <LoadingState/> : <TokenList tokens={selectedTokens}/>}
-                            </Box>
+
+    if (window.ethereum === undefined) {
+        console.log("cant find ")
+        return <Flex height="100vh" justify="center" alignItems="center">
+            <Text>Please install MetaMask to use this app</Text>
+        </Flex>
+
+    }
+
+    return <PoolContext.Provider value={allPools}>
+        <EthPriceContext.Provider value={currentEthPrice}>
+            <Box background="#E8E8E8">
+                <Header/>
+                <Box p="16">
+                    <Heading>Selected tokens</Heading>
+                    <Box background="white" p={4} border={1} borderRadius={12} mt={6}>
+                        <Box mt="4">
+                            {isLoading ? <LoadingState/> : <TokenList tokens={selectedTokens}/>}
                         </Box>
-                        <Box height={24}></Box>
-                        <Heading>Search token</Heading>
-                        <Box background="white" p={4} border={1} borderRadius={12} mt={6}>
-                            <Box mt="4">
-                                {isLoading ? <LoadingState/> : <TokenSearch/>}
-                            </Box>
+                    </Box>
+                    <Box height={24}></Box>
+                    <Heading>Search token</Heading>
+                    <Box background="white" p={4} border={1} borderRadius={12} mt={6}>
+                        <Box mt="4">
+                            <TokenSearch/>
                         </Box>
                     </Box>
                 </Box>
-            </EthPriceContext.Provider>
-        </PoolContext.Provider>
+            </Box>
+        </EthPriceContext.Provider>
+    </PoolContext.Provider>
 
-    );
+
 }
 
 export default App;
