@@ -3,13 +3,13 @@ import {Interface} from "ethers/lib/utils";
 import FactoryAbi from "./contracts/abis/uniswap/v3/UniswapV3Factory.json";
 import ERC20Abi from "./contracts/abis/erc20.json";
 import PoolAbi from "./contracts/abis/uniswap/v3/UniswapV3Pool.json";
+import {SELECTED_TOKENS} from "./constants";
 
 const projectId = "b320a1316f5443969acd83344f535650"
 
 const defaultProvider = new ethers.providers.getDefaultProvider("mainnet", {infura: {projectId,}})
 // const defaultProvider = new ethers.providers.getDefaultProvider()
 const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
-
 
 const getStartBlock = () => {
     //UTC0
@@ -186,14 +186,7 @@ const fetchTokensUsdPrice = async (address) => {
 }
 
 const groupPoolsBasedOnTokens = (pools,) => {
-    const selectedTokens = [
-        //   "0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0",//UniSwap
-        // "0x111111111117dC0aa78b770fA6A738034120C302",//1Inch
-        "0x35a532d376FFd9a705d0Bb319532837337A398E7",//wDoge
-        "0x6f40d4A6237C257fff2dB00FA0510DeEECd303eb" //Instadapp
-    ]
-
-    return selectedTokens.map(t => {
+    return SELECTED_TOKENS.map(t => {
         const tokenContractAddress = t.toLowerCase();
         console.log(tokenContractAddress)
         console.log(pools)
@@ -234,3 +227,4 @@ export const getUniswapPools = async (pools) => {
     return poolsWithDailyUSDValue;
 
 }
+

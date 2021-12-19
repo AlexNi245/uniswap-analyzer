@@ -1,22 +1,17 @@
-import {ColorModeScript} from '@chakra-ui/react';
+import {ChakraProvider, ColorModeScript} from '@chakra-ui/react';
 import React, {StrictMode} from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import * as serviceWorker from './serviceWorker';
-import {ApolloProvider} from "@apollo/react-hooks";
-import ApolloClient from "apollo-boost";
 
-const client = new ApolloClient({
-    uri: "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2",
-});
 
 ReactDOM.render(
     <StrictMode>
-        <ApolloProvider client={client}>
+        <ChakraProvider>
             <ColorModeScript/>
             <App/>
-        </ApolloProvider>
+        </ChakraProvider>
     </StrictMode>,
     document.getElementById('root')
 );
