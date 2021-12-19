@@ -1,8 +1,19 @@
-import {Flex} from "@chakra-ui/react";
+import {Table, Tbody, Td, Th, Thead, Tr} from "@chakra-ui/react";
+import {currencyFormatter} from "../utils/currencyFormatter";
 
 export const PoolList = ({pools}) => {
-
-    return pools.map(p => <PoolRow pool={p}/>)
+    return <Table variant='simple'>
+        <Thead>
+            <Tr>
+                <Th>Name</Th>
+                <Th textAlign="left">Daily Volume </Th>
+                <Th textAlign="center">Address</Th>
+            </Tr>
+        </Thead>
+        <Tbody>
+            {pools.map(p => <PoolRow pool={p}/>)}
+        </Tbody>
+    </Table>
 
 }
 
@@ -10,10 +21,10 @@ const PoolRow = ({pool}) => {
     const name = `${pool.token0.symbol} / ${pool.token1.symbol}`
     const address = pool.poolInfo.poolAddress;
     return (
-        <Flex px="4" justifyContent="space-around">
-            <p>{name}</p>
-            <p>{address}</p>
-            <p>{pool.dailyUSDVolume}</p>
-        </Flex>
+        <Tr>
+            <Td fontWeight="bold">{name}</Td>
+            <Td textAlign="left">{currencyFormatter.format(pool.dailyUSDVolume)}</Td>
+            <Td textAlign="center">{address}</Td>
+        </Tr>
     )
 }

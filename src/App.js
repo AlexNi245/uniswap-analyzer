@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {fetchUniswapPools} from "./uniswapFunctions";
-import {TokenValue} from "./components/TokenValue";
+import {TokenList} from "./components/TokenList/TokenList";
 import {Box, Heading} from "@chakra-ui/react";
 
 const projectId = "b320a1316f5443969acd83344f535650"
@@ -38,7 +38,7 @@ function App() {
         <Box p="16">
             <Heading>Token Value</Heading>
             <Box mt="4">
-                <TokenValue tokens={uniPool}/>
+                <TokenList tokens={uniPool}/>
             </Box>
         </Box>
 

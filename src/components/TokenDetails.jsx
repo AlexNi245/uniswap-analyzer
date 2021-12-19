@@ -1,147 +1,52 @@
-import React, {useEffect} from "react"
-import tokenList from "./tokenList.json";
-import {Chart, registerables} from "chart.js";
-import {web3Provider} from "../uniswapFunctions";
-import {BigNumber, ethers} from "ethers";
+import React from "react"
+import {Flex, Heading, Icon, Text} from "@chakra-ui/react";
+import {GasChart} from "./TokenList/GasChart";
+import {currencyFormatter} from "../utils/currencyFormatter";
+import {PoolList} from "./PoolList";
 
-export const TokenDetails = ({token, tokenContract}) => {
-    const {name, logoURI} = tokenList.tokens.find(t => t.address.toLowerCase() === tokenContract.toLowerCase())
-
-    return <div>
-        <p>{name}</p>
-        <p>{logoURI}</p>
-        <GasChart pools={token}/>
-    </div>
-}
-
-
-const GasChart = ({pools}) => {
-
-    const calcGasUsed = () => {
-        const foldedTransactions = pools.reduce((agg, pool) => {
-            return [...agg, ...pool.transactions]
-        }, [])
-
-        const foo = foldedTransactions.map(t => BigNumber.from(t.gasInfo.gasUsed).toString());
-        console.log(foldedTransactions[0])
-        return foo;
-    }
-
-    const calcEffictiveGasPrice = () => {
-        const foldedTransactions = pools.reduce((agg, pool) => {
-            return [...agg, ...pool.transactions]
-        }, [])
-
-        const foo = foldedTransactions.map(t => ethers.utils.formatUnits(BigNumber.from(t.gasInfo.effectiveGasPrice).toString(), "gwei"));
-        console.log(foo)
-        return foo;
-    }
-
-    const data = {
-        datasets: [
-            {
-                label: 'Effective Gas Price',
-                data: calcEffictiveGasPrice(),
-                borderColor: "#0057FF",
-                backgroundColor: "#0C91E8",
-                yAxisID: 'y1',
-                fill: true
-
-            },
-            {
-                label: 'Gas used',
-                data: calcGasUsed(),
-                borderColor: "#E6D598",
-                backgroundColor: "#FFECA9",
-                yAxisID: 'y',
-                fill: true
-            },
-
-        ]
-    };
-
-    const config = {
-        type: 'line',
-        data: data,
-        options: {
-            responsive: true,
-            interaction: {
-                mode: 'index',
-                intersect: false,
-            },
-            stacked: false,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Chart.js Line Chart - Multi Axis'
-                }
-            },
-            scales: {
-                y: {
-                    type: 'linear',
-                    display: true,
-                    position: 'left',
-                },
-                y1: {
-                    type: 'linear',
-                    display: true,
-                    position: 'right',
-
-                    // grid line settings
-                    grid: {
-                        drawOnChartArea: false, // only want the grid lines for one axis to show up
-                    },
-                },
-            }
-        },
-    };
-
-    const calcLabels = async () => {
-        //Fold Transaction from each pool
-        const foldedTransactions = pools.reduce((agg, pool) => {
-            return [...agg, ...pool.transactions]
-        }, [])
-
-        const transationsorderedByBlockNumber = foldedTransactions.sort((a, b) => {
-            return a.blockNumber > b.blockNumber
-        })
-
-        const highestBlockNumber = transationsorderedByBlockNumber[transationsorderedByBlockNumber.length - 1].blockNumber
-
-
-        const highestBlock = await web3Provider.getBlock(highestBlockNumber)
-        const highestBlockDAte = new Date(highestBlock.timestamp * 1000)
-
-
-        const timeStamps = [];
-        for (const i in [...Array(24).keys()]) {
-            timeStamps.push((highestBlockDAte.getHours() - i) % 24);
-        }
-
-        //Handle negative value
-        return timeStamps.reverse().map(d => {
-            if (d > 0) {
-                return d
-            }
-            return 24 + d
-
-        })
-    }
-
-
-    useEffect(() => {
-        const load = async () => {
-            const labels = await calcLabels();
-            console.log(labels)
-            const ctx = document.getElementById('myChart').getContext('2d');
-            Chart.register(...registerables);
-            new Chart(ctx, {...config, data: {...data, labels},})
-        }
-        load();
+export const TokenDetails = ({pools}) => {
+    console.log(pools)
+    const totaldailyVolume = pools.reduce((agg, current) => agg + current.dailyUSDVolume, 0)
+    const transactions = pools.reduce((agg, pool) => {
+        return [...agg, ...pool.transactions]
     }, [])
+    return <>
+        <Flex justifyContent="start">
+            <Flex direction="column" alignItems="start" mb="4" mr={12}>
+                <Heading fontSize="2xl" pb="0" mb="0">{currencyFormatter.format(totaldailyVolume)}</Heading>
+                <Text pt="0" mt="0" fontSize="sm" color="grey" si>Daily Volume</Text>
+            </Flex>
+            <Flex direction="column" alignItems="start">
+                <Heading fontSize="2xl" pb="0" mb="0">{transactions.length}</Heading>
+                <Text pt="0" mt="0" fontSize="sm" color="grey" si>Transactions</Text>
+            </Flex>
+        </Flex>
 
 
-    return <div>
-        <canvas id="myChart" width="800" height="400"></canvas>
-    </div>
+        <Flex justifyContent="space-between">
+            <Heading fontSize="2xl" mt={8} mb={4}>Gas Costs </Heading>
+            <Flex alignItems="center" mt="2">
+                <Flex alignItems="center" mr="2"> <CircleIcon color="#FFECA9"/><Text fontSize="sm">Gas
+                    used</Text></Flex>
+                <Flex alignItems="center"> <CircleIcon color="#0C91E8"/><Text fontSize="sm">Effective Gas
+                    Price</Text></Flex>
+            </Flex>
+        </Flex>
+
+        <GasChart pools={pools}/>
+
+        <Heading fontSize="2xl" mt={8} mb={4}>Trading Pools ({pools.length}) </Heading>
+        <PoolList pools={pools}/>
+
+    </>
 }
+
+const CircleIcon = (props) => (
+    <Icon viewBox='0 0 200 200' {...props}>
+        <path
+            fill='currentColor'
+            d='M 100, 100 m -75, 0 a 75,75 0 1,0 150,0 a 75,75 0 1,0 -150,0'
+        />
+    </Icon>
+)
+
