@@ -9,7 +9,8 @@ const projectId = "b320a1316f5443969acd83344f535650"
 
 const defaultProvider = new ethers.providers.getDefaultProvider("mainnet", {infura: {projectId,}})
 // const defaultProvider = new ethers.providers.getDefaultProvider()
-const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+export const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+
 
 const getStartBlock = () => {
     //UTC0
