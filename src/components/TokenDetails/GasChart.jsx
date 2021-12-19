@@ -129,6 +129,7 @@ export const GasChart = ({pools}) => {
             new Chart(ctx, {...config, data: {...data, labels},})
         }
         load();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
 
