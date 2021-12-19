@@ -18,7 +18,7 @@ import {
 import tokenList from "../trustwalletTokens.json";
 import {SELECTED_TOKENS} from "../../constants";
 import {useState} from "react";
-import {TokenDetails} from "../TokenDetails";
+import {TokenDetails} from "../TokenDetails/TokenDetails";
 import {TokenRow} from "./TokenRow";
 
 

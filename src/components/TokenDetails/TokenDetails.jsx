@@ -1,7 +1,7 @@
 import React from "react"
 import {Flex, Heading, Icon, Text} from "@chakra-ui/react";
-import {GasChart} from "./TokenList/GasChart";
-import {currencyFormatter} from "../utils/currencyFormatter";
+import {GasChart} from "./GasChart";
+import {currencyFormatter} from "../../utils/currencyFormatter";
 import {PoolList} from "./PoolList";
 
 export const TokenDetails = ({pools}) => {

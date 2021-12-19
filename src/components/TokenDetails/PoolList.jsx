@@ -1,5 +1,5 @@
 import {Table, Tbody, Td, Th, Thead, Tr} from "@chakra-ui/react";
-import {currencyFormatter} from "../utils/currencyFormatter";
+import {currencyFormatter} from "../../utils/currencyFormatter";
 
 export const PoolList = ({pools}) => {
     return <Table variant='simple'>
