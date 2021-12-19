@@ -31,7 +31,7 @@ function App() {
             }
             console.log("start fetching tokens")
             const res = await getUniswapPools(pools);
-            localStorage.setItem("pools", JSON.stringify(res))
+            //localStorage.setItem("pools", JSON.stringify(res))
 
             // const store = JSON.parse(localStorage.getItem("pools"))
             //console.log(res)

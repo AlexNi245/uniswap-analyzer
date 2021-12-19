@@ -132,38 +132,39 @@ const fetchGasFeesOfTransactions = async pool => {
     return {...pool, transactions: transactions.map((t, idx) => ({...t, gasInfo: gasInfo[idx]}))}
 }
 
-const cummulateValue = (pool) => {
+export const cummulateValue = (pool) => {
     const {transactions, poolInfo} = pool
-
-    const token0 = poolInfo.token0;
-    const token1 = poolInfo.token1;
-
     const swapws = transactions
         .filter(t => t.resolvedEvent.name === "Swap")
         .reduce((agg, r) => {
-            let amount0 = BigNumber.from(r.resolvedEvent.args["amount0"])
-            let amount1 = BigNumber.from(r.resolvedEvent.args["amount1"])
+            let amount0 = BigNumber.from(r.resolvedEvent.args[2])
+            let amount1 = BigNumber.from(r.resolvedEvent.args[3])
 
             if (amount0.lt(BigNumber.from(0))) {
-                amount0 = amount0.add(amount0.mul(BigNumber.from(-1)))
+                amount0 = amount0.mul(BigNumber.from(-1))
             }
             if (amount1.lt(BigNumber.from(0))) {
-                amount1 = amount1.add(amount1.mul(BigNumber.from(-1)))
+                amount1 = amount1.mul(BigNumber.from(-1))
             }
 
-            agg.amount0 = agg.amount0.add(amount0)
-            agg.amount1 = agg.amount1.add(amount1)
+            const newAmmount0 = agg.amount0.add(amount0)
+            const newAmmount1 = agg.amount1.add(amount1)
 
-            return agg
+
+            return {amount0: newAmmount0, amount1: newAmmount1}
+
         }, {
             amount0: BigNumber.from(0),
             amount1: BigNumber.from(0)
         })
 
-    swapws.amount0 = Number.parseFloat(ethers.utils.formatUnits(swapws.amount0, token0.decimals)) * pool.usd.usdToken0
-    swapws.amount1 = Number.parseFloat(ethers.utils.formatUnits(swapws.amount1, token1.decimals)) * pool.usd.usdToken1
 
-    const dailyUSDVolume = swapws.amount0 + swapws.amount1
+    swapws.amount0 = Number.parseFloat(ethers.utils.formatUnits(swapws.amount0, pool.token0.decimals)) * pool.usd.usdToken0
+    swapws.amount1 = Number.parseFloat(ethers.utils.formatUnits(swapws.amount1, pool.token1.decimals)) * pool.usd.usdToken1
+
+    //Divide by to like uniswap inof did
+    const dailyUSDVolume = (swapws.amount0 + swapws.amount1) / 2
+
 
     return {...pool, dailyUSDVolume}
 
