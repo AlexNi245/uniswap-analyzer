@@ -54,10 +54,9 @@ function App() {
             console.log("start fetching tokens")
             const res = await getPreselectedTokens(allPools);
             // localStorage.setItem("pools", JSON.stringify(res))
-            const store = JSON.parse(localStorage.getItem("pools"))
             //  console.log(res)
             // console.log(store)
-            setSelectedTokens(store)
+            setSelectedTokens(res)
             setIsLoading(false)
         }
         if (window.ethereum !== undefined) {

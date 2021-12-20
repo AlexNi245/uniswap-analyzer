@@ -10,11 +10,8 @@ export const PoolStats = () => {
 
     const [loading, setLoading] = useState(true)
 
-    useEffect(() => {
-        initializeSection()
-    }, [allPools])
 
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const initializeSection = async () => {
         const fromBlock = getStartBlock()
         const toBlock = await web3Provider.getBlockNumber() - fromBlock;
@@ -43,6 +40,10 @@ export const PoolStats = () => {
         }
 
     }
+
+    useEffect(() => {
+        initializeSection()
+    }, [allPools, initializeSection])
 
 
     return loading ? <Flex justify="center"><Text>Pools are being loaded </Text></Flex> : <Box>
