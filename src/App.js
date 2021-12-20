@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {fetchUniswapPools} from "./uniswapFunctions";
+import {fetchUniswapPools, getPreselectedTokens} from "./uniswapFunctions";
 import {TokenList} from "./components/TokenList/TokenList";
 import {Box, Flex, Heading, Text} from "@chakra-ui/react";
 import {LoadingState} from "./components/TokenList/LoadingState";
@@ -7,6 +7,7 @@ import {EthPriceContext} from "./context/EthPriceContext";
 import {Header} from "./components/Header/Header";
 import {TokenSearch} from "./components/TokenSearch/TokenSearch";
 import {PoolContext} from "./context/PoolContext";
+import {PoolStats} from "./components/PoolStats/PoolStats";
 
 
 function App() {
@@ -51,11 +52,11 @@ function App() {
                 return
             }
             console.log("start fetching tokens")
-            //const res = await getPreselectedTokens(allPools);
+            const res = await getPreselectedTokens(allPools);
             // localStorage.setItem("pools", JSON.stringify(res))
             const store = JSON.parse(localStorage.getItem("pools"))
             //  console.log(res)
-            console.log(store)
+            // console.log(store)
             setSelectedTokens(store)
             setIsLoading(false)
         }
@@ -78,7 +79,12 @@ function App() {
         <EthPriceContext.Provider value={currentEthPrice}>
             <Box background="#E8E8E8">
                 <Header/>
-                <Box p="16">
+                <Box px="16">
+                    <Heading></Heading>
+                    <Box mt="4">
+                        <PoolStats/>
+                    </Box>
+                    <Box height={24}></Box>
                     <Heading>Selected tokens</Heading>
                     <Box background="white" p={4} border={1} borderRadius={12} mt={6}>
                         <Box mt="4">

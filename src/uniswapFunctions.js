@@ -11,7 +11,7 @@ export const defaultProvider = new ethers.providers.getDefaultProvider("mainnet"
 export const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
 
 
-const getStartBlock = () => {
+export const getStartBlock = () => {
     //UTC0
     const TWENTY_FOUR_HOURS_IN_SECONDS = 86400;
 
@@ -93,7 +93,7 @@ const resolveTokenUsdValue = async pools => {
     })
 }
 
-const fetchTransactionsFromUniswapPool = async (pool) => {
+export const fetchTransactionsFromUniswapPool = async (pool) => {
     const toBlock = await web3Provider.getBlockNumber();
     const fromBlock = toBlock - getStartBlock();
 
