@@ -161,7 +161,7 @@ export const cummulateValue = (pool) => {
     swapws.amount0 = Number.parseFloat(ethers.utils.formatUnits(swapws.amount0, pool.token0.decimals)) * pool.usd.usdToken0
     swapws.amount1 = Number.parseFloat(ethers.utils.formatUnits(swapws.amount1, pool.token1.decimals)) * pool.usd.usdToken1
 
-    //Divide by to like uniswap inof did
+    //Divide by two like uniswap subgraph did
     const dailyUSDVolume = (swapws.amount0 + swapws.amount1) / 2
 
 
