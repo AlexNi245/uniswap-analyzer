@@ -24,9 +24,9 @@ function App() {
             const pools = await fetchUniswapPools();
             setAllPools(pools)
         }
-        if (window.ethereum !== undefined) {
-            setupPool();
-        }
+
+        setupPool();
+
     }, [])
 
     useEffect(() => {

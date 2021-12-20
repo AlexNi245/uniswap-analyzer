@@ -43,7 +43,8 @@ export const PoolStats = () => {
 
     useEffect(() => {
         initializeSection()
-    }, [allPools, initializeSection])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [allPools])
 
 
     return loading ? <Flex justify="center"><Text>Pools are being loaded </Text></Flex> : <Box>
