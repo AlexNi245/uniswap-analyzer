@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {fetchUniswapPools, getPreselectedTokens} from "./uniswapFunctions";
+import {fetchUniswapPools} from "./uniswapFunctions";
 import {TokenList} from "./components/TokenList/TokenList";
 import {Box, Flex, Heading, Text} from "@chakra-ui/react";
 import {LoadingState} from "./components/TokenList/LoadingState";
@@ -30,10 +30,14 @@ function App() {
 
     useEffect(() => {
         const fetchCurrentEthPrice = async () => {
-            const res = await fetch("https://api.etherscan.io/api?module=stats&action=ethprice");
-            const {result: {ethusd}} = await res.json()
-            console.log(ethusd)
-            setCurrentEthPrice(ethusd)
+            try {
+                const res = await fetch("https://api.etherscan.io/api?module=stats&action=ethprice");
+                const {result: {ethusd}} = await res.json()
+                console.log(ethusd)
+                setCurrentEthPrice(ethusd)
+            } catch (e) {
+                setCurrentEthPrice(3881)
+            }
         }
         if (window.ethereum !== undefined) {
             fetchCurrentEthPrice()
@@ -47,12 +51,12 @@ function App() {
                 return
             }
             console.log("start fetching tokens")
-            const res = await getPreselectedTokens(allPools);
-            localStorage.setItem("pools", JSON.stringify(res))
-            //const store = JSON.parse(localStorage.getItem("pools"))
-            //console.log(res)
-            //console.log(store)
-            setSelectedTokens(res)
+            //const res = await getPreselectedTokens(allPools);
+            // localStorage.setItem("pools", JSON.stringify(res))
+            const store = JSON.parse(localStorage.getItem("pools"))
+            //  console.log(res)
+            console.log(store)
+            setSelectedTokens(store)
             setIsLoading(false)
         }
         if (window.ethereum !== undefined) {

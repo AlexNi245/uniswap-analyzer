@@ -3,22 +3,30 @@ import {Flex, Heading, Icon, Text} from "@chakra-ui/react";
 import {GasChart} from "./GasChart";
 import {currencyFormatter} from "../../utils/currencyFormatter";
 import {PoolList} from "./PoolList";
+import {BigNumber} from "ethers";
 
 export const TokenDetails = ({pools}) => {
-    console.log(pools)
     const totaldailyVolume = pools.reduce((agg, current) => agg + current.dailyUSDVolume, 0)
     const transactions = pools.reduce((agg, pool) => {
         return [...agg, ...pool.transactions]
     }, [])
+    const avgGasUsed = (transactions.reduce((agg, t) => {
+        return agg.add(BigNumber.from(t.gasInfo.gasUsed))
+    }, BigNumber.from(0)).toNumber() / transactions.length).toFixed()
+
     return <>
         <Flex justifyContent="start">
             <Flex direction="column" alignItems="start" mb="4" mr={12}>
                 <Heading fontSize="2xl" pb="0" mb="0">{currencyFormatter.format(totaldailyVolume)}</Heading>
                 <Text pt="0" mt="0" fontSize="sm" color="grey" si>Daily Volume</Text>
             </Flex>
-            <Flex direction="column" alignItems="start">
+            <Flex direction="column" alignItems="start" mr={12}>
                 <Heading fontSize="2xl" pb="0" mb="0">{transactions.length}</Heading>
                 <Text pt="0" mt="0" fontSize="sm" color="grey" si>Transactions</Text>
+            </Flex>
+            <Flex direction="column" alignItems="start">
+                <Heading fontSize="2xl" pb="0" mb="0">{avgGasUsed}</Heading>
+                <Text pt="0" mt="0" fontSize="sm" color="grey" si>Average Gas used</Text>
             </Flex>
         </Flex>
 
