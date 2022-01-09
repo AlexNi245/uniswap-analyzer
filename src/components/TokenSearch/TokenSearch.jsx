@@ -50,16 +50,14 @@ export const TokenSearch = () => {
             <Box width={12}/>
             <Button background="green.300" onClick={fetchTokenFromUniswap}>Search</Button>
         </Flex>
-        <Box p={4} mt={4}>
-            {error && <ErrorState/>}
-            {loading && !error && <LoadingState name={name}/>}
-            {!loading && !error && pools.length > 0 &&
-            <Box>
-                < Heading fontSize={"xl"}> {name}</Heading>
-                <TokenDetails pools={pools}/>
-            </Box>
-            }
+        {error && <Box mt={4}><ErrorState/></Box>}
+        {loading && !error && <Box mt={4}><LoadingState name={name}/></Box>}
+        {!loading && !error && pools.length > 0 &&
+        <Box mt={4}>
+            < Heading fontSize={"xl"}> {name}</Heading>
+            <TokenDetails pools={pools}/>
         </Box>
+        }
     </Box>
 }
 

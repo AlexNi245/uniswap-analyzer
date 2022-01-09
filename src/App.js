@@ -75,7 +75,7 @@ function App() {
 
     return <PoolContext.Provider value={allPools}>
         <EthPriceContext.Provider value={currentEthPrice}>
-            <Box background="#E8E8E8">
+            <Box background="#E8E8E8" height={"100vh"}>
                 <Header/>
                 <Box px="16">
                     <Heading></Heading>
@@ -92,7 +92,7 @@ function App() {
                     <Box height={24}></Box>
                     <Heading>Search token</Heading>
                     <Box background="white" p={4} border={1} borderRadius={12} mt={6} mb={4}>
-                        <Box mt="4">
+                        <Box my="4">
                             <TokenSearch/>
                         </Box>
                     </Box>
