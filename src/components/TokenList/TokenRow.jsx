@@ -1,7 +1,7 @@
 import {BigNumber, ethers} from "ethers";
 import tokenList from "../trustwalletTokens.json";
 import {Button, Image, Td, Tr} from "@chakra-ui/react";
-import {currencyFormatter} from "../../utils/currencyFormatter";
+import {usdFormatter} from "../../functions/CoinGeckoFunctions";
 import {EthPriceContext} from "../../context/EthPriceContext";
 import {useContext} from "react";
 
@@ -45,9 +45,9 @@ export const TokenRow = ({pools, tokenContract, onClick}) => {
             src={logoURI}
         /></Td>
         <Td fontWeight="bold">{name}</Td>
-        <Td textAlign="center">{currencyFormatter.format(totaldailyVolume)}</Td>
+        <Td textAlign="center">{usdFormatter.format(totaldailyVolume)}</Td>
         <Td textAlign="center">{totalGasUsed}</Td>
-        <Td textAlign="center">{currencyFormatter.format(ethers.utils.formatEther(totalGasFees) * etherUsd)}</Td>
+        <Td textAlign="center">{usdFormatter.format(ethers.utils.formatEther(totalGasFees) * etherUsd)}</Td>
         <Td textAlign="end"><Button onClick={onClick}>Info</Button></Td>
     </Tr>)
 }

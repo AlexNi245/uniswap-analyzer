@@ -2,9 +2,10 @@ import React, {useContext, useState} from "react"
 import {Box, Button, Flex, Heading, Input} from "@chakra-ui/react";
 import {Contract} from "ethers";
 import ERC20Abi from "../../contracts/abis/erc20.json";
-import {defaultProvider, getAllPoolsOfSelectedToken, getTokens} from "../../uniswapFunctions";
 import {TokenDetails} from "../TokenDetails/TokenDetails";
 import {PoolContext} from "../../context/PoolContext";
+import {defaultProvider} from "../../functions/Web3Functions";
+import {getAllPoolsOfSelectedToken, getTokenVolumeAndGas} from "../../functions/UniswapFunctions";
 
 export const TokenSearch = () => {
 
@@ -29,7 +30,7 @@ export const TokenSearch = () => {
             setName(name)
             console.log(name)
             const tokenPools = await getAllPoolsOfSelectedToken(tokenContract.address, allPools)
-            const resolvedTokenPools = await getTokens([tokenPools]);
+            const resolvedTokenPools = await getTokenVolumeAndGas([tokenPools]);
             console.log(resolvedTokenPools)
             setLoading(false)
             setPools(resolvedTokenPools[0])

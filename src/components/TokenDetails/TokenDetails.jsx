@@ -1,7 +1,7 @@
 import React from "react"
 import {Flex, Heading, Icon, Text} from "@chakra-ui/react";
 import {GasChart} from "./GasChart";
-import {currencyFormatter} from "../../utils/currencyFormatter";
+import {usdFormatter} from "../../functions/CoinGeckoFunctions";
 import {PoolList} from "./PoolList";
 import {BigNumber} from "ethers";
 
@@ -17,7 +17,7 @@ export const TokenDetails = ({pools}) => {
     return <>
         <Flex justifyContent="start">
             <Flex direction="column" alignItems="start" mb="4" mr={12}>
-                <Heading fontSize="2xl" pb="0" mb="0">{currencyFormatter.format(totaldailyVolume)}</Heading>
+                <Heading fontSize="2xl" pb="0" mb="0">{usdFormatter.format(totaldailyVolume)}</Heading>
                 <Text pt="0" mt="0" fontSize="sm" color="grey" si>Daily Volume</Text>
             </Flex>
             <Flex direction="column" alignItems="start" mr={12}>

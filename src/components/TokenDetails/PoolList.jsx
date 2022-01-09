@@ -1,5 +1,5 @@
 import {Table, Tbody, Td, Th, Thead, Tr} from "@chakra-ui/react";
-import {currencyFormatter} from "../../utils/currencyFormatter";
+import {usdFormatter} from "../../functions/CoinGeckoFunctions";
 
 export const PoolList = ({pools}) => {
     return <Table variant='simple'>
@@ -23,7 +23,7 @@ const PoolRow = ({pool}) => {
     return (
         <Tr>
             <Td fontWeight="bold">{name}</Td>
-            <Td textAlign="left">{currencyFormatter.format(pool.dailyUSDVolume)}</Td>
+            <Td textAlign="left">{usdFormatter.format(pool.dailyUSDVolume)}</Td>
             <Td textAlign="center">{address}</Td>
         </Tr>
     )

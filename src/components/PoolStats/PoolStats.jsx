@@ -1,7 +1,8 @@
 import React, {useContext, useEffect, useState} from "react"
 import {Box, Flex, Heading, Text} from "@chakra-ui/react";
 import {PoolContext} from "../../context/PoolContext";
-import {fetchTransactionsFromUniswapPool, getStartBlock, web3Provider} from "../../uniswapFunctions";
+import {fetchTransactionsFromUniswapPool} from "../../functions/UniswapFunctions";
+import {getStartBlock, web3Provider} from "../../functions/Web3Functions";
 
 export const PoolStats = () => {
     const allPools = useContext(PoolContext)

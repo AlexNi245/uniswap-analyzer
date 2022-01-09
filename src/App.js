@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {fetchUniswapPools, getPreselectedTokens} from "./uniswapFunctions";
+import {fetchUniswapPools, getPreselectedTokens} from "./functions/UniswapFunctions";
 import {TokenList} from "./components/TokenList/TokenList";
 import {Box, Flex, Heading, Text} from "@chakra-ui/react";
 import {LoadingState} from "./components/TokenList/LoadingState";
@@ -53,10 +53,9 @@ function App() {
             }
             console.log("start fetching tokens")
             const res = await getPreselectedTokens(allPools);
-            // localStorage.setItem("pools", JSON.stringify(res))
-            //  console.log(res)
-            // console.log(store)
             setSelectedTokens(res)
+            console.log("finished fetching tokens")
+            console.log(res)
             setIsLoading(false)
         }
         if (window.ethereum !== undefined) {

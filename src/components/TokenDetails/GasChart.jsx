@@ -1,7 +1,7 @@
 import {BigNumber, ethers} from "ethers";
-import {web3Provider} from "../../uniswapFunctions";
 import {Chart, registerables} from "chart.js";
 import {useEffect, useState} from "react";
+import {web3Provider} from "../../functions/Web3Functions";
 
 export const GasChart = ({pools}) => {
 
@@ -100,12 +100,12 @@ export const GasChart = ({pools}) => {
 
 
         const highestBlock = await web3Provider.getBlock(highestBlockNumber)
-        const highestBlockDAte = new Date(highestBlock.timestamp * 1000)
+        const highestBlockDate = new Date(highestBlock.timestamp * 1000)
 
 
         const timeStamps = [];
         for (const i in [...Array(24).keys()]) {
-            timeStamps.push((highestBlockDAte.getHours() - i) % 24);
+            timeStamps.push((highestBlockDate.getHours() - i) % 24);
         }
 
         //Handle negative value
