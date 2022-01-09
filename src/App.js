@@ -91,7 +91,7 @@ function App() {
                     </Box>
                     <Box height={24}></Box>
                     <Heading>Search token</Heading>
-                    <Box background="white" p={4} border={1} borderRadius={12} mt={6}>
+                    <Box background="white" p={4} border={1} borderRadius={12} mt={6} mb={4}>
                         <Box mt="4">
                             <TokenSearch/>
                         </Box>
