@@ -104,26 +104,26 @@ export const PoolStats = () => {
                     <Flex direction={"column"} mr={8}>
                         <Flex alignItems="center" mb={2} width="100px" justify="space-between">
                             <Text pt="0" mt="0" mr="2" fontSize="lg" color="white">Mint</Text>
-                            <Heading fontSize="2xl" pb="0" mb="0" color="white"> {events.Mint}</Heading>
+                            <Heading fontSize="2xl" pb="0" mb="0" color="white"> {events.Mint ?? 0}</Heading>
                         </Flex>
 
 
                         <Flex alignItems="center" width="100px" justify="space-between">
                             <Text pt="0" mt="0" mr="2" fontSize="lg" color="white">Swap</Text>
-                            <Heading fontSize="2xl" pb="0" mb="0" color="white">{events.Swap}</Heading>
+                            <Heading fontSize="2xl" pb="0" mb="0" color="white">{events.Swap ?? 0}</Heading>
                         </Flex>
 
                     </Flex>
                     <Flex direction={"column"}>
                         <Flex alignItems="center" width="100px" mb={2} justify="space-between">
                             <Text pt="0" mt="0" mr="2" fontSize="lg" color="white">Burn</Text>
-                            <Heading fontSize="2xl" pb="0" mb="0" color="white">{events.Burn}</Heading>
+                            <Heading fontSize="2xl" pb="0" mb="0" color="white">{events.Burn ?? 0}</Heading>
                         </Flex>
 
 
                         <Flex alignItems="center" width="100px" justify="space-between">
                             <Text pt="0" mt="0" mr="2" fontSize="lg" color="white">Collect</Text>
-                            <Heading fontSize="2xl" pb="0" mb="0" color="white">{events.Collect}</Heading>
+                            <Heading fontSize="2xl" pb="0" mb="0" color="white">{events.Collect ?? 0}</Heading>
                         </Flex>
                     </Flex>
                 </Flex>
